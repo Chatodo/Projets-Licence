@@ -32,6 +32,5 @@ Ensuite on ouvre le serveur en faisant ./serveur_tcp port
 
 Pour ouvrir un client on fait ./client_tcp port (le même que celui du serveur)
 
-## Note obentu : 19/20 
-
-## Auteurs : KRIVOKUCA Ivan SI ALI Aghiles
+### Note obentu : 19/20 
+### Auteurs : KRIVOKUCA Ivan SI ALI Aghiles

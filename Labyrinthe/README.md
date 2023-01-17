@@ -2,7 +2,6 @@
 Un projet entre étudiants a propos d'un jeu de labyrinthe en Java 
 
 ## Pour compilier le projet avec Linux :
-
 On se place dans minotaure-java
 ```
 javac Minotaure/*.java

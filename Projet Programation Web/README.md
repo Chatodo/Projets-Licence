@@ -6,7 +6,6 @@ Ce projet consiste à créer un site web de partage scientifique. Il est compos�
 <li> Une page pour afficher les chercheurs </li> 
 <li> Une page pour afficher les conférences </li> 
 <li> Une page pour afficher les publications </li>
-<br>
 
 ### Technologies utilisées
 - HTML
@@ -14,9 +13,7 @@ Ce projet consiste à créer un site web de partage scientifique. Il est compos�
 - PHP
 - Jquery
 
-
 ## Installation
-___
 #### Prérequis :
 - Un serveur web (Apache, Nginx, ...)
 - PHP
