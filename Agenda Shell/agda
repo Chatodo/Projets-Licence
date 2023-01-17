@@ -1,0 +1,389 @@
+#!/bin/sh
+#KRIVOKUCA Ivan 11807642 GR5/SH1
+#Je déclare qu'il s'agit de mon propre travail
+
+#Mise en forme du texte
+souligne='\033[4m'
+gras='\033[1m'
+couleur_rouge='\033[91m'
+couleur_jaune='\033[93m'
+couleur_vert='\033[92m'
+couleur_bleu='\033[96m'
+fin='\033[0m'
+
+#Création du fichier "agda_data.csv" s'il n'existe pas 
+fichier=agda_data.csv
+if ! [ -f $fichier ]
+then
+    touch $fichier
+fi
+
+#Triage de .agda_date par la date du début de l'événement(ordre croissant)
+cp $fichier temp
+sort -n -t "," -k2.7 -k2.4,2.5 -k2.1,2.2 temp >$fichier
+rm temp
+
+#Vérifie si la date est correcte = retourne 0
+est_date(){	
+	#Vérification n°1: Si la longueur de la chaine est incorecte = retourne 1
+	if [ ${#1} -ne 10 ]
+	then
+		return 1
+	else
+		case $1 in
+    	[0-3][0-9]/[0-1][0-9]/[0-9][0-9][0-9][0-9])
+			#Vérification n°2: Si la date existe 
+			#Substituions de commande pour avoir jour/mois/annee
+			IFS='/'
+			jour=$(echo $1 | cut -c1-2)
+			mois=$(echo $1 | cut -c3-5)
+			annee=$(echo $1 | cut -c7-10)
+			#Vérification que la date existe dans le calendrier
+			if ! date -d "$annee-$mois-$jour" >/dev/null 2>/dev/null
+			then
+				return 1
+			fi
+			return 0
+			;;
+    	*) 
+			return 1
+			;;
+  		esac
+	fi
+}
+
+#Si la date "$1" est bien avant celle du "$2" alors retourne 0
+#Sinon retourne 1
+est_date_passer(){
+	IFS='/'
+	jour=$(echo $1 | cut -c1-2)
+	mois=$(echo $1 | cut -c3-5)
+	annee=$(echo $1 | cut -c7-10)
+	#Convertit $1 en une date sous le format yyyymmjj
+	#ce qui facilite la comparaison
+	date=$(date -d "$annee-$mois-$jour" +"%Y%m%d")
+	jour1=$(echo $2 | cut -c1-2)
+	mois1=$(echo $2 | cut -c3-5)
+	annee1=$(echo $2 | cut -c7-10)
+	date1=$(date -d "$annee1-$mois1-$jour1" +"%Y%m%d")
+	if  [ $date -gt $date1 ]
+	then
+		return 1
+	fi
+	return 0
+}
+
+#Vérifie si l'heure est correcte = retourne 0
+est_heure(){
+#Vérification n°1: Si la longueur de la chaine est incorecte = retourne 1
+	if [ ${#1} -ne 5 ]
+	then
+		return 1
+	else
+#Vérification n°2: Si la date existe 
+		case $1 in
+    	[0-2][0-9]:[0-6][0-9])
+			IFS=':'
+			#Substituions de commande pour avoir l'heure et la minute
+			heure=$(echo $1 | cut -c1-2)
+			minute=$(echo $1 | cut -c3-5)
+			if [ "$heure" -gt 23 ] || [ "$minute" -gt 60 ]
+			then
+				return 1
+			fi
+			return 0
+			;;
+    	*) 
+			return 1
+			;;
+  		esac
+	fi
+}
+
+#Retourne 1 si une virgule est dans une chaine de carractère 
+#sinon 0
+pas_virgule(){
+	case $1 in
+	*,*)
+		return 1
+		;;
+	*) 
+		return 0
+		;;
+  	esac
+}
+
+#Retourne 0 si nombre
+est_nombre(){
+	case $1 in
+	*[!0-9]*)
+		return 1
+	esac
+	return 0
+}
+
+#Affichage du fichier agda_data.csv avec du formatage de texte
+affichage(){
+	while IFS=',' read -r evenement debut_date debut_heure fin_date fin_heure\
+	confirm_jour description lieu prive
+	do
+		if [ -z $prive ]
+		then
+			printf "${couleur_jaune}Événement :${fin} ${souligne}%s${fin}\n" "$evenement" 
+			if [ $confirm_jour = "o" ]
+			then
+				printf "${gras}Uniquement la journée du %s${fin} à partir de ${souligne}%s${fin}\
+				 \n" "$debut_date" "$debut_heure"
+			else
+				printf "${couleur_bleu}Debut : ${gras}Le %s à %s${fin} \n" "$debut_date" "$debut_heure"
+				printf "${couleur_bleu}Fin : ${gras}Le %s à %s${fin} \n" "$fin_date" "$fin_heure"
+			fi
+			if [ -n "$description" ]
+			then
+				printf "${couleur_vert}Remarques:${fin} %s\n" "$description" 
+			fi
+			if [ -n "$lieu" ]
+			then
+				printf "${couleur_vert}Lieu:${fin} %s\n" "$lieu" 
+			fi
+		else
+			printf "${couleur_rouge}ERREUR : Cet événement est privé\n${fin}"
+		fi
+		printf "\n"
+	done
+}
+
+#Ajout d'un événement sur le fichier agda_data.csv
+#Champs ajouté : "evenement debut_date debut_heure fin_date
+#                fin_heure confirm_jour description lieu prive"
+#Avec des test de fonction pour vérifier :
+#	si toutes les dates sont cohérentes
+#	heure correcte
+#	pas de virgule
+ajout(){
+    printf "Saisir les informations ci-dessus ! \n"
+	printf "Le nom de l'événement : "
+	IFS= read -r evenement
+	while ! pas_virgule "$evenement"
+	do
+		printf "Ne mettez pas de virgule ! Réessayez\n">&2
+		IFS= read -r evenement
+	done
+	printf "Date du début de l'événement (jj/mm/yyyy) : "
+	IFS= read -r debut_date
+	while ! est_date "$debut_date"
+	do
+		printf "Date invalide (format jj/mm/yyyy),veuillez réessayer! \n">&2
+		IFS= read -r debut_date
+	done
+	printf "Heure du début de l'événement (hh:mm) : "
+	IFS= read -r debut_heure
+	while ! est_heure "$debut_heure"
+	do
+		printf "Date invalide (format hh:mm),veuillez réessayer! \n">&2
+		IFS= read -r debut_heure
+	done
+	printf "Toute la journée ? (o/n) : "
+    IFS= read -r confirm_jour
+    if [ $confirm_jour = "n" ]
+    then 
+        printf "Date du fin de l'événement (jj/mm/yyyy) : "
+	    IFS= read -r fin_date
+		while ! est_date "$fin_date"
+		do
+			printf "Date invalide (format jj/mm/yyyy),veuillez réessayer! \n">&2
+			IFS= read -r fin_date
+		done
+		while ! est_date_passer "$debut_date" "$fin_date"
+		do
+			printf "Date de fin incompatible avec la date de début,veuillez réessayer !\n">&2
+			printf "(Rappel : Date de début %s )\n" "$debut_date"
+			IFS= read -r fin_date
+		done
+        printf "Heure de fin de l'événement (hh:mm) : "
+	    IFS= read -r fin_heure
+		while ! est_heure "$fin_heure"
+		do
+			printf "Date invalide (format hh:mm),veuillez réessayer! \n">&2
+			IFS= read -r fin_heure
+		done
+    fi
+    printf "Ajouter une description ? (o/n) : "
+    IFS= read -r confirm_description
+	if [ $confirm_description = "o" ]
+	then
+		printf "Description : "
+		IFS= read -r description
+		while ! pas_virgule "$description"
+		do
+			printf "Ne mettez pas de virgule ! Réessayez \n">&2
+			IFS= read -r description
+		done
+	fi
+	printf "Privé ? (o/n) : "
+	IFS= read -r confirm_prive
+	if [ $confirm_prive = "o" ]
+	then
+		prive="TRUE"
+	fi
+	printf "Ajouter un lieu ? (o/n) ? : "
+	IFS= read -r confirm_lieu
+	if [ $confirm_lieu = "o" ]
+	then
+		printf ": "
+		IFS= read -r lieu
+		while ! pas_virgule "$lieu"
+		do
+			printf "Ne mettez pas de virgule ! Réessayez \n">&2
+			IFS= read -r lieu
+		done
+	fi
+	printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" "$evenement" "$debut_date" "$debut_heure" \
+	"$fin_date" "$fin_heure" "$confirm_jour" "$description" "$lieu" "$prive" >>$fichier
+}
+
+#Cherche la chaine de caractère dans agda_data.csv
+search()
+{
+	grep -i "$1" "$fichier"| affichage
+}
+
+aide(){
+	cat <<FIN
+USAGE : ./agda [OPTION]...
+Sans argument, la commande agda affiche les événements présents dans le fichier
+"agda_data.csv" trier dans l'ordre croissant des dates de début d’événement 
+
+DESCRIPTION DES PARAMETRES:
+-a, --add		ajouter un événement au fichier
+-s, --search		nécessite un deuxième argument	
+			cherche la chaîne de caractère qui est le deuxième argument 
+			\!/ si votre chaîne de caractère contient un espace,
+			    veuillez mettre des guillemets pour pas avoir d'erreur\!/
+-d, --delete 		nécessite un deuxième argument	
+			si l'argument est un nombre alors suppression de la ligne
+			sinon on montre toutes les correspondance de la chaine de caractère
+			et l'utilisateur sera invité a effacer la ligne qu'il souhaite
+-l, --live		montre les événements avec une date de début supérieur
+			a celle de la date de l'utilisateur (date de la machine)
+-p 			affiche tous les événements y compris ceux qui sont privés
+			sans modification du fichier
+-h, --help		afficher cette aide et sortir		
+FIN
+}
+
+#Affiche les événements privés sans modification du fichier
+priver(){
+	sed -e "s/"TRUE"//g" "$fichier" |affichage
+}
+
+#Efface soit la ligne soit la chaîne de caractère
+delete(){
+	#Récupère le nombre de ligne
+	nombre_ligne=$(wc -l <$fichier)
+	case $1 in 
+	*[!0-9]*)
+		#Cherche si la chaîne existe dans le fichier
+		if ! grep -q "$1" "$fichier"
+		then
+			printf "Aucune correspondance avec : %s\n">&2 "$1"
+			exit 1
+		fi
+		#Montre les lignes où la chaine de caractère est présente   	
+		grep -n "$1" "$fichier" |
+		while IFS=':' read -r numero_ligne ligne
+		do
+			printf "${couleur_rouge}Événement nuémro : ${gras}%d${fin}\n" "$numero_ligne"
+			printf "%s\n" "$ligne" | affichage
+		done
+		printf "Quel numéro d'événement voulez vous supprimer ? : "
+		read ligne_supr
+		while ! est_nombre "$ligne_supr"
+		do
+			printf "Erreur, mettez un nombre !\n">&2
+			read ligne_supr
+		done
+		while [ "$ligne_supr" -gt "$nombre_ligne" ]
+		do
+			printf "Erreur, nombre supérieur aux nombres de lignes.\n">&2
+			read ligne_supr
+		done
+		#Suppresion du numéro de la ligne 
+		sed -i "${ligne_supr}d" "$fichier"	
+		;;
+	*)
+		if [ "$1" -gt "$nombre_ligne" ]
+		then
+			printf "Erreur, nombre supérieur aux nombres de lignes.\n">&2
+			exit 1
+		fi
+		#Suppresion du numéro de la ligne 
+		sed -i "${1}d" "$fichier"
+	esac
+}
+
+#Montre les événements qui sont supérieur a la date de l'utilisateur
+en_cours(){
+	DATE=`date '+%Y-%m-%d'` #Récupère la date de la machine
+	date=$(date -d "$DATE" +"%Y%m%d")
+	while IFS=',' read -r evenement debut_date
+	do
+		IFS='/'
+		jour=$(echo $debut_date | cut -c1-2)
+		mois=$(echo $debut_date | cut -c3-5)
+		annee=$(echo $debut_date| cut -c7-10)
+		date1=$(date -d "$annee-$mois-$jour" +"%Y%m%d")
+		if  [ $date1 -ge $date ]
+		then
+			printf "%s,%s\n" "$evenement" "$debut_date" >>.temp
+		fi
+		done<$fichier
+		affichage <.temp
+		rm .temp
+}
+
+#Vérification des paramètres
+case $# in
+0)
+	affichage <$fichier
+	;;
+1)
+	case $1 in
+	-a | --add)
+		ajout
+		;;
+	-h | --help)
+		aide
+		;;
+	-l | --live)
+		en_cours
+		;;
+	-p)
+		priver
+		;;
+	*)
+		printf "Commande non reconnue \n">&2
+		printf "Pour connaître la liste des commandes reconnues, essayez '--help'\n">&2
+		exit 1
+	esac
+	;;
+2)
+	case $1 in
+	-s | --search)
+		search "$2"
+		;;
+	-d|--delete)
+		delete "$2"
+		;;
+	*)
+		printf "Commande non reconnue \n">&2
+		printf "Pour connaître la liste des commandes reconnues, essayez '--help'\n">&2
+		exit 1
+	esac
+	;;
+*)
+	printf "Commande non reconnue \n">&2
+	printf "Pour connaître la liste des commandes reconnues, essayez '--help'\n">&2
+	exit 1
+	;;
+esac

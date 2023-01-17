@@ -1,0 +1,298 @@
+body{
+	font-family: Verdana, sans-serif;
+	margin: 5%;
+	background-image: url(../images/background.png);	
+}
+
+footer{
+	bottom: 0;
+	background-color: #0015ff2c;
+}
+
+.logo{
+	height: 150px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 30px;
+}
+
+li.haut {
+	display: inline-block;
+}
+
+.bas li{
+	display: inline-block;
+}
+
+li.droite{
+	float: right;
+}
+button.login, button.logout{
+	padding: 17px 30px;
+	color : whitesmoke;
+	font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	background: rgb(81, 173, 98);
+}
+
+button.logout{
+	background-color: rgb(204, 16, 16);
+}
+
+.logout{
+	display: none;
+}
+
+ul.haut a:link, a:visited {
+	background-color:  #ecf0f1;
+	padding: 18px 30px;
+	text-decoration: none;
+	color: rgb(173, 81, 129);
+	font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	
+}
+
+.bbas{
+	height: 300px;
+	width: 100%;
+	text-align: center;
+}
+
+.bas{
+	margin: 2%;	
+	padding-top: 100px;
+}
+
+ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+li a {
+	display: block;
+	padding: 8px;
+	text-decoration: none;
+}
+
+li a:hover{
+	background-color: #A9A9A9;
+	color : rgb(0, 128, 255);
+}
+
+li a.active1 {
+	background-color: dodgerblue;
+	color: white;
+}
+
+li a.active2 {
+	background-color: blueviolet;
+	color: white;
+}
+
+li a.admin {
+	background-color: rgba(255, 65, 1, 0.563);
+	color: white;
+}
+
+header{
+	background-color: #ecf0f1;
+	width: 100%;
+}
+
+.fondlogo{
+	background-color: #b6f287;
+	height: 250px;
+}
+
+.corps{
+	background-color: white;
+	float: none;
+}
+
+.splitscreen {
+	display: flex;
+	background-color: white;
+}
+
+.splitscreen .left {
+  	flex: 40em;
+	height: 500px;
+}
+
+.splitscreen .right {
+  	flex: 1;
+}
+
+.img_d{
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	width: 99%;
+	height: 100%;
+	
+}
+
+.diapo{
+	margin-top: 10px;
+	position:relative;
+	display: flex;
+    justify-content: left;
+	height: 250px; 
+}
+
+.diapo img {
+	position:absolute; 
+	display: flex;
+	justify-content: center;
+	height: 250px;
+	
+}
+
+.corps{
+	display: flex;
+	position:relative;
+	justify-content: center;
+}
+
+.corps p{
+	position:absolute; 
+	display: flex;
+}
+
+input[type=text], input[type=password] {
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid rgb(195, 195, 195);
+	box-sizing: border-box;
+	-webkit-transition: 0.2s;
+  	transition: 0.2s;
+	border-radius: 5px;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+	border: 2px solid rgb(235, 235, 235);
+}
+
+input[type=submit],input[type=button] {
+	width: 25%;
+	position : relative;
+	left: 35%;
+	background-color: #4CAF50;
+	color: white;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+input[name=bleubouton]{
+	background-color: #26a8e5;
+	text-align: center;
+}
+
+.modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+	padding-top: 60px;
+}
+  
+/* Modal Content/Box */
+.modal-content {
+	background-color: #fefefe;
+	margin: 5px auto; /* 15% from the top and centered */
+	padding: 35px;
+	width: 80%; /* Could be more or less, depending on screen size */
+}
+  
+/* The Close Button */
+.close {
+	/* Position it in the top right corner outside of the modal */
+	position: absolute;
+	top: 60px;
+	padding-right: 4em;
+	right: 10px;
+	color: #000;
+	font-size: 35px;
+	font-weight: bold;
+}
+  
+/* Close button on hover */
+.close:hover{
+	cursor: pointer;
+}
+
+h3{
+	text-align: center;
+	text-decoration: underline;
+}
+
+td,th {
+	padding: 12px 15px;
+}
+
+thead{
+  color: black;
+  
+}
+  
+table{
+	width: 95%;
+	border-collapse: collapse;
+	margin-left:1em;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	font-size: 0.9em;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+table thead tr {
+    background-color: #00c22d;
+    color: #ffffff;
+    text-align: left;
+}
+
+.boite{
+	padding: 1em;
+	background-color: white;
+}
+
+input[required]{
+    background-image: url('../images/redasterik.png');
+    background-repeat: no-repeat;
+    background-position-x: right;
+}
+
+th.sort-by { 
+	padding-right: 20px;
+	position: relative;
+}
+th.sort-by:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+	width: 0;
+	border-top-color: #666;
+	margin-top: 1px;
+}
