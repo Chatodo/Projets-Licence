@@ -1,5 +1,6 @@
 # Projets-Licence
-Ici sont répertoriés <b> <u>la plupart de mes projets</b> </u> faits en licence (L1-L2-L3) à __l'Université Sorbonne Paris Nord__
+## English version here : [English](./README_EN.md)
+Ici sont répertoriés <b><u>la plupart de mes projets</b></u> faits en licence (L1-L2-L3) à __l'Université Sorbonne Paris Nord__.
 
 Une description plus ou moins détaillée est donnée dans chaque projet.
 
